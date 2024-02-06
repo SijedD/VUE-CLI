@@ -4,11 +4,11 @@
     <form @submit.prevent="registerUser" class="registration-form">
       <!-- Input fields for registration -->
       <div class="form-group">
-        <label for="username">Никнейм пользователя:</label>
+        <label for="username">Никнейм:</label>
         <input type="text" id="username" v-model="username" required>
       </div>
       <div class="form-group">
-        <label for="email">Электронная почта пользователя:</label>
+        <label for="email">Электронная почта:</label>
         <input type="email" id="email" v-model="email" required>
       </div>
       <div class="form-group">
@@ -122,20 +122,23 @@ input {
 }
 
 .registration-button {
-  background-color: #4CAF50;
+  background-color: fuchsia;
   color: white;
 }
 
 .registration-button:hover {
-  background-color: #45a049;
+  background-color: red;
 }
 
 .back-button {
-  background-color: #f44336;
+  background-color: fuchsia;
   color: white;
 }
 
 .back-button:hover {
-  background-color: #da190b;
+  background-color: red;
+}
+h2{
+  text-align: center;
 }
 </style>

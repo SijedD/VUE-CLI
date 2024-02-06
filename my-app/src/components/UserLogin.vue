@@ -4,7 +4,7 @@
     <form @submit.prevent="loginUser" class="login-form">
       <!-- Input fields for login -->
       <div class="form-group">
-        <label for="email">Электронная почта пользователя:</label>
+        <label for="email">Электронная почта:</label>
         <input type="email" id="email" v-model="email" required :class="{ 'error': emailError }">
         <div v-if="emailError" class="error">Введите корректный адрес электронной почты</div>
       </div>
@@ -109,7 +109,7 @@ input {
 }
 
 .login-button {
-  background-color: #4CAF50;
+  background-color: fuchsia;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -118,11 +118,11 @@ input {
 }
 
 .login-button:hover {
-  background-color: #45a049;
+  background-color: red;
 }
 
 .back-button {
-  background-color: #f44336;
+  background-color: fuchsia;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -131,6 +131,6 @@ input {
 }
 
 .back-button:hover {
-  background-color: #da190b;
+  background-color: red;
 }
 </style>

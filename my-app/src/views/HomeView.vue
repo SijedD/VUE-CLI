@@ -5,7 +5,7 @@
       <router-link to="/registration" class="auth-button">Регистрация</router-link>
       <router-link to="/login" class="auth-button">Авторизация</router-link>
     </div>
-    <h1>Каталог товаров</h1>
+    <h1 >Каталог товаров</h1>
     <!-- Список товаров из каталога -->
     <div class="product" v-for="product in products" :key="product.id">
       <h3>{{ product.name }}</h3>
@@ -61,6 +61,9 @@ export default {
 </script>
 
 <style>
+h1{
+text-align: center;
+}
 .home-container {
   max-width: 800px;
   margin: 0 auto;
@@ -95,7 +98,7 @@ export default {
 
 .add-to-cart-button,
 .logout-button {
-  background-color: #4CAF50;
+  background-color: fuchsia;
   color: white;
   padding: 8px 16px;
   border: none;
@@ -105,7 +108,7 @@ export default {
 
 .add-to-cart-button:hover,
 .logout-button:hover {
-  background-color: #45a049;
+  background-color: red;
 }
 
 .orders-link {
