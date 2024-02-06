@@ -86,8 +86,7 @@ text-align: center;
 }
 
 .product {
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid fuchsia;
   padding: 10px;
   margin-bottom: 15px;
 }
