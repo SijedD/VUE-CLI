@@ -4,11 +4,11 @@
     <form @submit.prevent="registerUser" class="registration-form">
       <!-- Input fields for registration -->
       <div class="form-group">
-        <label for="username">Никнейм:</label>
+        <label for="username">Никнейм пользователя:</label>
         <input type="text" id="username" v-model="username" required>
       </div>
       <div class="form-group">
-        <label for="email">Электронная почта:</label>
+        <label for="email">Электронная почта пользователя:</label>
         <input type="email" id="email" v-model="email" required>
       </div>
       <div class="form-group">
@@ -30,54 +30,61 @@
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      username: '',
-      email: '',
-      password: '',
-      confirmPassword: '',
-      error: ''
-    };
-  },
-  methods: {
-    registerUser() {
-      if (this.password !== this.confirmPassword) {
-        this.error = 'Пароли не совпадают';
-        return;
-      }
-
-      const userData = {
-        username: this.username,
-        email: this.email,
-        password: this.password
+  export default {
+    data() {
+      return {
+        username: '',
+        email: '',
+        password: '',
+        confirmPassword: '',
+        error: ''
       };
-
-      // Отправляем запрос на сервер для регистрации пользователя
-      // В данном случае это просто выводим сообщение в консоль
-      console.log('Registration form submitted with data:', userData);
-
-      // После успешной регистрации можно выполнить какие-либо действия, например, переход на другую страницу
-      // Здесь мы просто очищаем поля формы
-      this.username = '';
-      this.email = '';
-      this.password = '';
-      this.confirmPassword = '';
-
-      // Переход на другую страницу (например, на страницу входа в систему)
-      // Здесь необходимо реализовать навигацию с помощью маршрутизатора Vue Router
     },
+    methods: {
+      registerUser() {
+        // Проверяем, есть ли пользователь с таким же никнеймом или почтой уже зарегистрирован
+        const savedUserData = localStorage.getItem('userData');
+        if (savedUserData) {
+          const userData = JSON.parse(savedUserData);
+          if (userData.username === this.username) {
+            // Если пользователь с таким же никнеймом уже зарегистрирован, выводим сообщение об ошибке
+            this.error = 'Пользователь с таким никнеймом уже зарегистрирован';
+            return; // Прерываем выполнение метода, чтобы избежать сохранения нового пользователя
+          }
+          if (userData.email === this.email) {
+            // Если пользователь с такой же почтой уже зарегистрирован, выводим сообщение об ошибке
+            this.error = 'Пользователь с такой почтой уже зарегистрирован';
+            return; // Прерываем выполнение метода, чтобы избежать сохранения нового пользователя
+          }
+        }
 
-    goBack() {
-      // Переходим на главную страницу
-      // Здесь необходимо реализовать навигацию с помощью маршрутизатора Vue Router
-      console.log('Перенаправлен на главный экран');
+        // Сохраняем данные нового пользователя в локальное хранилище
+        const userData = {
+          username: this.username,
+          email: this.email,
+          password: this.password
+        };
+        localStorage.setItem('userData', JSON.stringify(userData));
 
-      // Пример перехода на главную страницу с использованием маршрутизатора Vue Router
-      this.$router.push('/');
-    },
-  }
-};
+        // Очищаем поля формы после регистрации
+        this.username = '';
+        this.email = '';
+        this.password = '';
+        this.confirmPassword = '';
+
+        // После успешной регистрации перенаправляем пользователя на страницу авторизации
+        this.$router.push('/login');
+      },
+      goBack() {
+        // Переходим на главную страницу
+        // Здесь необходимо реализовать навигацию с помощью маршрутизатора Vue Router
+        console.log('Перенаправлен на главный экран');
+
+        // Пример перехода на главную страницу с использованием маршрутизатора Vue Router
+        this.$router.push('/');
+      },
+    }
+  };
 </script>
 
 <style scoped>
