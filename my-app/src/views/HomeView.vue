@@ -8,9 +8,9 @@
     <!-- Никнейм и кнопка выхода -->
     <div v-else class="user-info">
       <p>Имя пользователя:{{ username }}</p>
-
       <button @click="logout" class="logout-button">Выход</button>
     </div>
+
     <h1>Каталог товаров</h1>
     <!-- Список товаров из каталога -->
     <div class="tovar">
@@ -21,6 +21,23 @@
       <button v-if="isClient && isLoggedIn" @click="addToCart(product)" class="add-to-cart-button">Добавить в корзину</button>
     </div>
   </div>
+
+  </div>
+
+  <div class="cart">
+    <h2>Корзина</h2>
+    <div class="cart-item" v-for="(item, index) in cart" :key="index">
+    <li>
+      {{item.name}}
+      <p>Количество: {{ item.quantity }}</p>
+      <div class="item-controls">
+        <button @click="incrementItem(index)">+</button>
+        <button @click="decrementItem(index)">-</button>
+        <button @click="removeItem(index)">Удалить</button>
+      </div>
+    </li>
+    </div>
+
   </div>
 </template>
 
@@ -31,16 +48,17 @@
       return {
         // Список товаров из каталога
         products: [
-          { id: 1, name: 'Товар 1', description: 'Описание товара 1' },
-          { id: 2, name: 'Товар 2', description: 'Описание товара 2' },
-          { id: 3, name: 'Товар 3', description: 'Описание товара 3' },
+          { id: 1, name: 'Товар 1', description: 'Описание товара 1', quantity: 1},
+          { id: 2, name: 'Товар 2', description: 'Описание товара 2' , quantity: 1},
+          { id: 3, name: 'Товар 3', description: 'Описание товара 3' , quantity: 1},
         ],
         // Статус авторизации пользователя
         isLoggedIn: false,
         // Роль пользователя (для демонстрации)
         role: 'client', // Может быть 'client', 'admin' и т.д.
         // Никнейм пользователя
-        username: ''
+        username: '',
+        cart: []
       };
     },
     computed: {
@@ -50,8 +68,21 @@
       }
     },
     methods: {
+      incrementItem(index) {
+        this.cart[index].quantity++;
+
+      },
+      decrementItem(index) {
+        if (this.cart[index].quantity > 1) {
+          this.cart[index].quantity--;
+        }
+      },
+      removeItem(index) {
+        this.cart.splice(index, 1);
+      },
       // Добавление товара в корзину (для демонстрации)
       addToCart(product) {
+        this.cart.push(product)
         console.log('Добавлен товар в корзину:', product);
       },
       // Выход из аккаунта
@@ -74,6 +105,14 @@
 </script>
 
 <style>
+  .cart{
+    padding-left: 30px;
+    padding-right: 30px;
+    position: absolute;
+    margin-left: 1300px;
+    margin-top: -250px;
+    border: 1px solid fuchsia
+  }
   body{
     background-color: #42b983;
   }
