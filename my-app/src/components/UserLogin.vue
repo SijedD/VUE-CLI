@@ -2,9 +2,8 @@
   <div class="login-container">
     <h2>Вход в систему</h2>
     <form @submit.prevent="loginUser" class="login-form">
-      <!-- Input fields for login -->
       <div class="form-group">
-        <label for="email">Электронная почта:</label>
+        <label for="email">Электронная почта пользователя:</label>
         <input type="email" id="email" v-model="email" required :class="{ 'error': emailError }">
         <div v-if="emailError" class="error">Введите корректный адрес электронной почты</div>
       </div>
@@ -13,68 +12,46 @@
         <input type="password" id="password" v-model="password" required :class="{ 'error': passwordError }">
         <div v-if="passwordError" class="error">Введите пароль</div>
       </div>
-      <!-- Error message -->
       <div v-if="error" class="error">{{ error }}</div>
-      <!-- Login button -->
       <button type="submit" class="login-button">Войти</button>
     </form>
-    <!-- Back button -->
     <button @click="goBack" class="back-button">На главную страницу</button>
   </div>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      email: '',
-      password: '',
-      emailError: false,
-      passwordError: false,
-      error: ''
-    };
-  },
-  methods: {
-    loginUser() {
-      // Проверяем валидность введенных данных
-      this.emailError = !this.validateEmail(this.email);
-      this.passwordError = !this.password;
+  export default {
+    data() {
+      return {
+        email: '',
+        password: '',
+        emailError: false,
+        passwordError: false,
+        error: ''
+      };
+    },
+    methods: {
+      loginUser() {
+        // Получаем данные пользователя из локального хранилища
+        const savedUserData = localStorage.getItem('userData');
+        if (savedUserData) {
+          const userData = JSON.parse(savedUserData);
+          if (userData.email === this.email && userData.password === this.password) {
 
-      if (!this.emailError && !this.passwordError) {
-        // Подготавливаем данные для отправки на сервер
-        const userData = {
-          email: this.email,
-          password: this.password
-        };
-
-        // Отправляем запрос на сервер для аутентификации пользователя
-        // В данном случае это просто выводим сообщение в консоль
-        console.log('Login form submitted with data:', userData);
-
-        // Переход на другую страницу (например, на домашнюю страницу) после успешной аутентификации
-        // Здесь необходимо реализовать навигацию с помощью маршрутизатора Vue Router
-        // В данном примере просто очищаем поля формы
-        this.email = '';
-        this.password = '';
-      } else {
-        // Выводим сообщение об ошибке ввода данных
-        this.error = 'Пожалуйста, исправьте ошибки в форме входа';
+            this.$router.push('/'); // Перенаправляем пользователя на главную страницу
+          } else {
+            this.error = 'Неверные учетные данные';
+          }
+        } else {
+          this.error = 'Пользователь не найден';
+        }
+      },
+      goBack() {
+        // Переходим на главную страницу
+        this.$router.push('/');
       }
-    },
-    goBack() {
-      // Переходим на главную страницу
-      // Здесь необходимо реализовать навигацию с помощью маршрутизатора Vue Router
-      console.log('Перенаправлен на главный экран');
-
-      // Пример перехода на главную страницу с использованием маршрутизатора Vue Router
-      this.$router.push('/');
-    },
-    validateEmail(email) {
-      // Реализовать функцию для проверки валидности email
-      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
     }
-  }
-};
+  };
 </script>
 
 <style>
