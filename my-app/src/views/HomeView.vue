@@ -5,14 +5,23 @@
     <div class="auth-buttons" v-if="!isAuthenticated">
       <router-link to="/registration" class="auth-button">Регистрация</router-link>
       <router-link to="/login" class="auth-button" >Авторизация</router-link>
+      <router-link to="/cart" class="auth-button" >Корзина</router-link>
+
     </div>
     <!-- Никнейм и кнопка выхода -->
     <div v-else class="user-info">
       <button  @click="logout" class="logout-button">Выход</button>
+      <router-link to="/cart" class="auth-button" >Корзина</router-link>
+    </div>
+
+    <div>
+      <h1 class="catalog" >Каталог товаров</h1>
+
     </div>
 
     <div>
       <h1 class="catalog" @click="getProduct">Каталог товаров</h1>
+
       <div class="ag-format-container">
       </div>
       <div class="ag-courses_item" v-for="product in products" :key="product.id">
@@ -41,7 +50,6 @@
 
 
 <script>
-import {auth} from '../components/UserLogin.vue'
 export default {
   name: 'HomeView',
   data() {
@@ -49,6 +57,9 @@ export default {
       products: [],
       productsInCart: []
     };
+  },
+  created() {
+  this.getProduct();
   },
   methods: {
     // Добавление товара в корзину (для демонстрации)
