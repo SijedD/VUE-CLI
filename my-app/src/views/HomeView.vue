@@ -1,85 +1,56 @@
+
 <template>
   <div class="home-container">
     <!-- Кнопки регистрации и авторизации -->
-    <div class="auth-buttons" v-if="!isLoggedIn">
+    <div class="auth-buttons" v-if="!isAuthenticated">
       <router-link to="/registration" class="auth-button">Регистрация</router-link>
-      <router-link to="/login" class="auth-button">Авторизация</router-link>
+      <router-link to="/login" class="auth-button" >Авторизация</router-link>
     </div>
     <!-- Никнейм и кнопка выхода -->
     <div v-else class="user-info">
-      <p>Имя пользователя:{{ username }}</p>
-      <button @click="logout" class="logout-button">Выход</button>
+      <button  @click="logout" class="logout-button">Выход</button>
     </div>
 
-    <h1>Каталог товаров</h1>
-    <!-- Список товаров из каталога -->
-    <div class="tovar">
-    <div class="product" v-for="product in products" :key="product.id">
-      <h3>{{ product.name }}</h3>
-      <p>{{ product.description }}</p>
-      <!-- Показывать кнопку "Добавить в корзину" только для авторизованных пользователей-клиентов -->
-      <button v-if="isClient && isLoggedIn" @click="addToCart(product)" class="add-to-cart-button">Добавить в корзину</button>
-    </div>
-  </div>
-
-  </div>
-
-  <div class="cart">
-    <h2>Корзина</h2>
-    <div class="cart-item" v-for="(item, index) in cart" :key="index">
-    <li>
-      {{item.name}}
-      <p>Количество: {{ item.quantity }}</p>
-      <div class="item-controls">
-        <button @click="incrementItem(index)">+</button>
-        <button @click="decrementItem(index)">-</button>
-        <button @click="removeItem(index)">Удалить</button>
+    <div>
+      <h1 class="catalog" @click="getProduct">Каталог товаров</h1>
+      <div class="ag-format-container">
       </div>
-    </li>
-    </div>
+      <div class="ag-courses_item" v-for="product in products" :key="product.id">
+        
+          <div class="ag-courses-item_bg"></div>
 
+          <div class="title">
+            Название: {{ product.name }}
+          </div>
+
+          <div class="ag-courses-item_date-box">
+            <span class="description">
+            Описание: {{ product.description }}
+          </span>
+            <p class="price">
+            Цена: {{ product.price }}руб.
+          </p>
+            <button class="btn" >В корзину</button>
+          </div>
+        
+      </div>
+    </div>
   </div>
 </template>
 
+
 <script>
+import {auth} from '../components/UserLogin.vue'
   export default {
     name: 'HomeView',
     data() {
       return {
-        // Список товаров из каталога
-        products: [
-          { id: 1, name: 'Товар 1', description: 'Описание товара 1', quantity: 1},
-          { id: 2, name: 'Товар 2', description: 'Описание товара 2' , quantity: 1},
-          { id: 3, name: 'Товар 3', description: 'Описание товара 3' , quantity: 1},
-        ],
-        // Статус авторизации пользователя
-        isLoggedIn: false,
-        // Роль пользователя (для демонстрации)
-        role: 'client', // Может быть 'client', 'admin' и т.д.
-        // Никнейм пользователя
+        auth: false,
+        products: [],
         username: '',
-        cart: []
       };
     },
-    computed: {
-      // Проверка роли пользователя на клиента
-      isClient() {
-        return this.role === 'client';
-      }
-    },
     methods: {
-      incrementItem(index) {
-        this.cart[index].quantity++;
-
-      },
-      decrementItem(index) {
-        if (this.cart[index].quantity > 1) {
-          this.cart[index].quantity--;
-        }
-      },
-      removeItem(index) {
-        this.cart.splice(index, 1);
-      },
       // Добавление товара в корзину (для демонстрации)
       addToCart(product) {
         this.cart.push(product)
@@ -87,41 +58,51 @@
       },
       // Выход из аккаунта
       logout() {
-        this.isLoggedIn = false;
-        this.username = '';
-        console.log('Выход из аккаунта');
-      }
+      localStorage.removeItem('userToken');
+      this.$router.push('/');
     },
-    created() {
-      // Проверяем, авторизован ли пользователь
-      const savedUserData = localStorage.getItem('userData');
-      if (savedUserData) {
-        const userData = JSON.parse(savedUserData);
-        this.isLoggedIn = true;
-        this.username = userData.username;
+
+      async getProduct(){
+      const url = "https://jurapro.bhuser.ru/api-shop/products";
+      const response = await fetch(url,{
+        method: 'GET',
+            headers: {
+          'Content-Type': 'application/json',
+        },
+
+      })
+      if (response.ok) {
+        const result = await response.json();
+        this.products = result.data
+        console.log('Result: ', result)
+      } else {
+        this.error = "Ошибка";
+        console.error(this.error);
       }
+
+
     }
+    },
+    computed: {
+    isAuthenticated() {
+      return !!localStorage.getItem('userToken');
+    }
+  }
   };
 </script>
 
 <style>
-  .cart{
-    padding-left: 30px;
-    padding-right: 30px;
-    position: absolute;
-    margin-left: 1300px;
-    margin-top: -250px;
-    border: 1px solid fuchsia
+  .ag-courses_item{
+    border: 1px solid fuchsia;
+  padding: 10px;
+  margin-bottom: 15px;
+  margin-left: 50px;
   }
   body{
     background-color: #42b983;
   }
-  .user-info{
-    text-align: center;
-  }
-  .tovar{
-    display: flex;
-  }
+  
+  
 h1{
 text-align: center;
 }
@@ -146,16 +127,7 @@ text-align: center;
   text-decoration: underline;
 }
 
-.product {
-  border: 1px solid fuchsia;
-  padding: 10px;
-  margin-bottom: 15px;
-  margin-left: 50px;
-}
 
-.product h3 {
-  margin-top: 0;
-}
 
 .add-to-cart-button,
 .logout-button {
