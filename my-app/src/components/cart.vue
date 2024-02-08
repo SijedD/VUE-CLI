@@ -32,7 +32,7 @@
           <p class="price">
             Цена: {{ product.price }}руб.
           </p>
-          <button  v-if="isAuthenticated" @click="addToCart(product)" type="submit" class="btn">В корзину</button>
+          <button  @click="deleteProduct(product)" type="submit" class="btn">Удалить из корзины</button>
         </div>
 
       </div>
@@ -48,7 +48,6 @@ export default {
     return {
       url: 'https://jurapro.bhuser.ru/api-shop',
       products: [],
-      productsInCart: []
     };
   },
   created() {
@@ -80,7 +79,33 @@ export default {
       }
 
 
-    }
+    },
+    async deleteProduct(product) {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        console.error('Токен пользователя отсутствует.');
+        return;
+      }
+
+      const url = `https://jurapro.bhuser.ru/api-shop/cart/${product.id}`;
+      try {
+        const response = await fetch(url, {
+          method: "DELETE",
+          headers: {
+            "Authorization": `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          console.log("Товар успешно удален из корзины");
+          location. reload()
+
+        } else {
+          console.error("Ошибка удаления товара из корзины:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Ошибка удаления товара из корзины:", error);
+      }
+    },
   },
   computed: {
     isAuthenticated() {
