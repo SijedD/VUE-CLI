@@ -2,17 +2,10 @@
   <div class="login-container">
     <h2>Вход в систему</h2>
     <form @submit.prevent="loginUser" class="login-form">
-      <div class="form-group">
         <label for="email">Электронная почта пользователя:</label>
-        <input type="email" id="email" v-model="email" required :class="{ 'error': emailError }">
-        <div v-if="emailError" class="error">Введите корректный адрес электронной почты</div>
-      </div>
-      <div class="form-group">
+        <input type="email" id="email" v-model="email" required >
         <label for="password">Пароль:</label>
-        <input type="password" id="password" v-model="password" required :class="{ 'error': passwordError }">
-        <div v-if="passwordError" class="error">Введите пароль</div>
-      </div>
-      <div v-if="error" class="error">{{ error }}</div>
+        <input type="password" id="password" v-model="password" required >
       <button type="submit" class="login-button">Войти</button>
     </form>
     <button @click="goBack" class="back-button">На главную страницу</button>
@@ -23,35 +16,43 @@
   export default {
     data() {
       return {
+        auth: true,
         email: '',
         password: '',
-        emailError: false,
-        passwordError: false,
-        error: ''
+        url: 'https://jurapro.bhuser.ru/api-shop'
       };
     },
     methods: {
-      loginUser() {
-        // Получаем данные пользователя из локального хранилища
-        const savedUserData = localStorage.getItem('userData');
-        if (savedUserData) {
-          const userData = JSON.parse(savedUserData);
-          if (userData.email === this.email && userData.password === this.password) {
+      async loginUser() {
+        const user = {
+            email: this.email,
+            password: this.password
+        };
+        const response = await fetch(this.url + '/login', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(user)
+        });
+        const data = await response.json();
+        localStorage.setItem('userToken', data.data.user_token);
+        console.log('Result:', data);
+        this.$router.push('/');
+        this.auth = true
 
-            this.$router.push('/'); // Перенаправляем пользователя на главную страницу
-          } else {
-            this.error = 'Неверные учетные данные';
-          }
-        } else {
-          this.error = 'Пользователь не найден';
-        }
       },
       goBack() {
         // Переходим на главную страницу
         this.$router.push('/');
       }
+    },
+    computed: {
+    isAuthenticated() {
+      return !!localStorage.getItem('userToken');
     }
-  };
+  }
+  }
 </script>
 
 <style>
