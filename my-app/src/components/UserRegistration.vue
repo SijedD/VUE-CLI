@@ -2,10 +2,9 @@
   <div class="registration-container">
     <h2>Регистрация</h2>
     <form @submit.prevent="registerUser" class="registration-form">
-      <!-- Input fields for registration -->
       <div class="form-group">
-        <label for="username">Никнейм пользователя:</label>
-        <input type="text" id="username" v-model="username" required>
+        <label for="username">ФИО:</label>
+        <input type="text" id="username" v-model="fio" required>
       </div>
       <div class="form-group">
         <label for="email">Электронная почта пользователя:</label>
@@ -15,13 +14,6 @@
         <label for="password">Пароль:</label>
         <input type="password" id="password" v-model="password" required>
       </div>
-      <div class="form-group">
-        <label for="confirmPassword">Повторите пароль:</label>
-        <input type="password" id="confirmPassword" v-model="confirmPassword" required>
-      </div>
-      <!-- Error messages -->
-      <div v-if="error" class="error">{{ error }}</div>
-      <!-- Registration button -->
       <button type="submit" class="registration-button">Регистрация</button>
     </form>
     <!-- Back button -->
@@ -33,47 +25,31 @@
   export default {
     data() {
       return {
-        username: '',
+        url: 'https://jurapro.bhuser.ru/api-shop',
+        fio: '',
         email: '',
         password: '',
-        confirmPassword: '',
-        error: ''
-      };
+      }
     },
     methods: {
-      registerUser() {
-        // Проверяем, есть ли пользователь с таким же никнеймом или почтой уже зарегистрирован
-        const savedUserData = localStorage.getItem('userData');
-        if (savedUserData) {
-          const userData = JSON.parse(savedUserData);
-          if (userData.username === this.username) {
-            // Если пользователь с таким же никнеймом уже зарегистрирован, выводим сообщение об ошибке
-            this.error = 'Пользователь с таким никнеймом уже зарегистрирован';
-            return; // Прерываем выполнение метода, чтобы избежать сохранения нового пользователя
-          }
-          if (userData.email === this.email) {
-            // Если пользователь с такой же почтой уже зарегистрирован, выводим сообщение об ошибке
-            this.error = 'Пользователь с такой почтой уже зарегистрирован';
-            return; // Прерываем выполнение метода, чтобы избежать сохранения нового пользователя
-          }
-        }
-
-        // Сохраняем данные нового пользователя в локальное хранилище
-        const userData = {
-          username: this.username,
+      async registerUser() {
+        const user = {
+          fio: this.fio,
           email: this.email,
           password: this.password
         };
-        localStorage.setItem('userData', JSON.stringify(userData));
 
-        // Очищаем поля формы после регистрации
-        this.username = '';
-        this.email = '';
-        this.password = '';
-        this.confirmPassword = '';
-
-        // После успешной регистрации перенаправляем пользователя на страницу авторизации
+        const response = await fetch(this.url + '/signup', {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify(user)
+        });
         this.$router.push('/login');
+        console.log('Response:', response);
+        const result = await response.json();
+        console.log('Result:', result);
       },
       goBack() {
         // Переходим на главную страницу
