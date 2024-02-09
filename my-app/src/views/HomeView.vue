@@ -6,21 +6,18 @@
       <router-link to="/registration" class="auth-button">Регистрация</router-link>
       <router-link to="/login" class="auth-button" >Авторизация</router-link>
       <router-link to="/cart" class="auth-button" >Корзина</router-link>
+      <router-link to="/order" class="auth-button" >Заказы</router-link>
 
     </div>
     <!-- Никнейм и кнопка выхода -->
     <div v-else class="user-info">
       <button  @click="logout" class="logout-button">Выход</button>
       <router-link to="/cart" class="auth-button" >Корзина</router-link>
+      <router-link to="/order" class="auth-button" >Заказы</router-link>
     </div>
 
     <div>
-      <h1 class="catalog" >Каталог товаров</h1>
-
-    </div>
-
-    <div>
-      <h1 class="catalog" @click="getProduct">Каталог товаров</h1>
+      <h1 class="catalog">Каталог товаров</h1>
 
       <div class="ag-format-container">
       </div>
@@ -45,6 +42,9 @@
 
       </div>
     </div>
+    <div class="popup" v-if="showPopup">
+      Товар добавлен в корзину
+    </div>
   </div>
 </template>
 
@@ -55,7 +55,8 @@ export default {
   data() {
     return {
       products: [],
-      productsInCart: []
+      productsInCart: [],
+      showPopup: false
     };
   },
   created() {
@@ -84,6 +85,10 @@ export default {
           }
           const data = await response.json();
           console.log(data.data.message);
+          this.showPopup = true;
+          setTimeout(() => {
+            this.showPopup = false;
+          }, 3000);
         } else {
           console.error("Ошибка добавления товара в корзину:", response.statusText);
         }
@@ -166,8 +171,6 @@ h1{
   text-decoration: underline;
 }
 
-
-
 .add-to-cart-button,
 .logout-button {
   background-color: fuchsia;
@@ -181,6 +184,18 @@ h1{
 .add-to-cart-button:hover,
 .logout-button:hover {
   background-color: red;
+}
+
+.popup {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: fuchsia;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 999;
 }
 
 </style>
