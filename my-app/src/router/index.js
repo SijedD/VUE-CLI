@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import UserRegistration from '../components/UserRegistration.vue';
 import UserLogin from '../components/UserLogin.vue'
 import cart from '../components/cart.vue'
+import orders from '../components/orders.vue'
 
 const routes = [
   {
@@ -26,10 +27,16 @@ const routes = [
     component: UserLogin
   },
   {
-    path:'/cart',
-    name:'cart',
+    path: '/cart',
+    name: 'cart',
     component: cart
+  },
+  {
+    path: '/order',
+    name: 'order',
+    component: orders
   }
+  
 ]
 
 const router = createRouter({
