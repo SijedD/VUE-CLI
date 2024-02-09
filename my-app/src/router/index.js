@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import UserRegistration from '../components/UserRegistration.vue';
 import UserLogin from '../components/UserLogin.vue'
+import cart from '../components/cart.vue'
 
 const routes = [
   {
